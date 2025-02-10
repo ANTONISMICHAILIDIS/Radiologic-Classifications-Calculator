@@ -1,6 +1,8 @@
 import streamlit as st
 
-st.title("Radiologic Classification & Next Steps")
+st.title("Radiologic Classifications Calculator")
+st.markdown("<small>Created by Michailidis A. for free use</small>", unsafe_allow_html=True)
+
 st.markdown("""
 This app assists in radiologic classification by having you first select an organ and a classification system.  
 Then, you’ll enter key imaging criteria (e.g., size, enhancement, morphology).  
@@ -185,11 +187,11 @@ if category == "NEURO (BRAIN & SPINE)":
         - Disc signal brightness, disc height, and distinction between nucleus and annulus.
         """)
         disc_desc = st.selectbox("Select the disc appearance", [
-            "Homogeneous, bright T2 signal; normal height (Grade I)",
-            "Slightly less bright; normal height (Grade II)",
-            "Intermediate signal; slight decrease in height (Grade III)",
-            "Hypointense signal; moderate height loss (Grade IV)",
-            "Very hypointense; collapsed disc space (Grade V)"
+            "Homogeneous, bright T2 signal; normal disc height; clear distinction (Grade I)",
+            "Slightly less bright; normal height; clear boundary (Grade II)",
+            "Intermediate signal; slight decrease in height; borderline boundary (Grade III)",
+            "Hypointense; moderate height loss; unclear boundary (Grade IV)",
+            "Very hypointense; collapsed disc space; severe degeneration (Grade V)"
         ])
         if "Grade I" in disc_desc:
             pf_grade = "I"
@@ -202,7 +204,7 @@ if category == "NEURO (BRAIN & SPINE)":
         else:
             pf_grade = "V"
         st.write(f"**Pfirrmann Grade:** {pf_grade}")
-        st.markdown("**Next Steps:** For mild degeneration, conservative management is typical. More severe grades may require interventional or surgical management.")
+        st.markdown("**Next Steps:** For mild degeneration, conservative treatment is usually recommended; severe degeneration may require interventional or surgical management.")
     
     # -----------------------------------------------------------
     # 1.6 TLICS – Thoracolumbar Injury Classification
@@ -241,7 +243,7 @@ if category == "NEURO (BRAIN & SPINE)":
         st.write(f"**TLICS Score:** {tlics_score}")
         st.markdown("**Interpretation:** A TLICS score of ≥5 generally indicates that surgical treatment is recommended.")
         if tlics_score >= 5:
-            st.markdown("**Next Steps:** Recommend surgical consultation for possible stabilization.")
+            st.markdown("**Next Steps:** Recommend surgical consultation for stabilization.")
         else:
             st.markdown("**Next Steps:** Consider conservative management with close follow-up.")
 
@@ -266,16 +268,17 @@ elif category == "HEAD & NECK":
         st.subheader("TNM Staging (AJCC) for Head & Neck Cancers")
         st.markdown("""
         **Key Radiologic Features:**
-        - **Tumor Size (cm) and Invasion:** Measure the primary lesion and note if it invades adjacent structures.
-        - **Lymph Node Involvement:** Number and size of nodes; extranodal extension.
-        - **Metastases:** Presence of distant metastatic lesions.
+        - **Tumor Size:** Measure the primary lesion (cm)  
+        - **Invasion:** Assess if adjacent structures are invaded  
+        - **Lymph Nodes:** Number and size; extranodal extension  
+        - **Metastasis:** Presence of distant lesions
         """)
         tumor_size = st.number_input("Enter primary tumor size (cm)", min_value=0.0, step=0.1, value=2.0)
         invasion = st.radio("Is there invasion of adjacent structures?", ["No", "Yes"])
         nodes = st.number_input("Number of involved lymph nodes", min_value=0, step=1, value=1)
         metastasis = st.radio("Are distant metastases present?", ["No", "Yes"])
         
-        # (Simplified TNM assignment.)
+        # Simplified TNM assignment.
         if tumor_size < 2 and invasion == "No":
             T_cat = "T1"
         elif tumor_size < 4 and invasion == "No":
@@ -303,8 +306,8 @@ elif category == "HEAD & NECK":
         st.subheader("Lugano Classification for Lymphoma")
         st.markdown("""
         **Key Features (from FDG-PET/CT):**
-        - **Nodal involvement:** Number of nodal regions (single vs. multiple)  
-        - **Extranodal involvement:** Present or absent
+        - **Nodal Involvement:** Number of nodal regions  
+        - **Extranodal Involvement:** Present or absent
         """)
         nodal_regions = st.number_input("Enter number of nodal regions involved", min_value=0, step=1, value=1)
         extranodal = st.radio("Is there extranodal involvement?", ["No", "Yes"])
@@ -317,9 +320,9 @@ elif category == "HEAD & NECK":
         elif extranodal == "Yes" and nodal_regions >= 3:
             lugano_stage = "Stage IV"
         else:
-            lugano_stage = "Stage III"  # simplified fallback
+            lugano_stage = "Stage III"
         st.write(f"**Lugano Stage:** {lugano_stage}")
-        st.markdown("**Next Steps:** Tailor treatment based on stage; consider chemotherapy and follow-up PET-CT for response evaluation.")
+        st.markdown("**Next Steps:** Tailor treatment based on stage; consider chemotherapy and follow-up PET-CT for treatment response.")
     
     # -----------------------------------------------------------
     # 2.3 Friedman Staging (Tonsillar Hypertrophy)
@@ -340,7 +343,7 @@ elif category == "HEAD & NECK":
         else:
             friedman = "4+"
         st.write(f"**Friedman Stage:** {friedman}")
-        st.markdown("**Next Steps:** If tonsillar hypertrophy is significant (3+ or 4+), consider further evaluation for obstructive sleep apnea or planning for tonsillectomy.")
+        st.markdown("**Next Steps:** Significant hypertrophy (3+ or 4+) warrants further evaluation for airway compromise and potential tonsillectomy.")
 
 # =============================================================================
 # 3. CARDIOTHORACIC
@@ -384,7 +387,7 @@ elif category == "CARDIOTHORACIC":
         st.subheader("Qanadli Score for Pulmonary Embolism")
         st.markdown("""
         **Key Steps:**
-        - Count the number of segmental arteries (10 per lung) with partial or complete occlusion.
+        - Count the number of partially and completely occluded segmental arteries (10 per lung).
         """)
         partial = st.number_input("Number of partially occluded segmental arteries", min_value=0, max_value=20, value=0)
         complete = st.number_input("Number of completely occluded segmental arteries", min_value=0, max_value=20, value=0)
@@ -393,15 +396,14 @@ elif category == "CARDIOTHORACIC":
         st.markdown("**Next Steps:** A higher score indicates a larger clot burden. For high scores, consider thrombolysis and monitor right ventricular function.")
     
     # -----------------------------------------------------------
-    # 3.3 Lung-RADS
+    # 3.3 Lung-RADS (CT Screening)
     # -----------------------------------------------------------
     elif cardio_option == "3.3 Lung-RADS (CT Screening)":
         st.subheader("Lung-RADS Classification")
         st.markdown("""
         **Key Radiologic Features:**
-        - Nodule size (mm)
-        - Composition: Solid, part-solid, or ground-glass
-        - Growth on follow-up
+        - Nodule size (mm)  
+        - Nodule composition (Solid, Part-solid, Ground-glass)
         """)
         nodule_size = st.number_input("Enter nodule size (mm)", min_value=0, value=6)
         nodule_type = st.radio("Nodule composition", ["Solid", "Part-solid", "Ground-glass"])
@@ -413,7 +415,7 @@ elif category == "CARDIOTHORACIC":
         else:
             lung_rads = "Category 4 (Suspicious)"
         st.write(f"**Lung-RADS Category:** {lung_rads}")
-        st.markdown("**Next Steps:** For suspicious findings (Category 4), recommend diagnostic CT and possible tissue sampling.")
+        st.markdown("**Next Steps:** For suspicious nodules (Category 4), recommend diagnostic CT and possible tissue sampling.")
     
     # -----------------------------------------------------------
     # 3.4 COVID-19 Chest Imaging (RSNA)
@@ -438,11 +440,11 @@ elif category == "CARDIOTHORACIC":
             covid_category = "Negative"
         st.write(f"**RSNA COVID-19 Category:** {covid_category}")
         if covid_category == "Typical":
-            st.markdown("**Next Steps:** Recommend confirmatory RT-PCR testing and isolation.")
+            st.markdown("**Next Steps:** Recommend confirmatory RT-PCR testing and initiate isolation protocols.")
         elif covid_category == "Indeterminate":
             st.markdown("**Next Steps:** Correlate clinically; consider repeat imaging.")
         elif covid_category == "Atypical":
-            st.markdown("**Next Steps:** Evaluate for other causes of pneumonia.")
+            st.markdown("**Next Steps:** Evaluate for alternative pneumonia etiologies.")
         else:
             st.markdown("**Next Steps:** Routine care; no evidence of pneumonia.")
     
@@ -453,16 +455,16 @@ elif category == "CARDIOTHORACIC":
         st.subheader("ATS/ERS Classification for Idiopathic Interstitial Pneumonias")
         st.markdown("""
         **Key HRCT Patterns:**
-        - UIP: Reticular opacities, honeycombing, basal and subpleural predominance  
-        - NSIP: Ground-glass opacities, less honeycombing, diffuse or lower-lung predominance  
+        - UIP: Reticular opacities, honeycombing, basal/subpleural predominance  
+        - NSIP: Ground-glass opacities with uniform distribution  
         - COP: Patchy consolidation with peripheral distribution
         """)
         pattern = st.selectbox("Select the predominant HRCT pattern", ["UIP", "NSIP", "COP", "Other"])
         st.write(f"**HRCT Pattern:** {pattern}")
-        st.markdown("**Next Steps:** Correlate with clinical findings; if UIP, consider evaluation for idiopathic pulmonary fibrosis and referral to pulmonology.")
+        st.markdown("**Next Steps:** Correlate with clinical findings; if UIP, evaluate for idiopathic pulmonary fibrosis and refer to pulmonology.")
     
     # -----------------------------------------------------------
-    # 3.6 Breast: BI-RADS (We include it here as part of the cardiothoracic group for demo)
+    # 3.6 Breast: BI-RADS
     # -----------------------------------------------------------
     elif cardio_option == "3.6 Breast: BI-RADS":
         st.subheader("BI-RADS Classification for Breast Imaging")
@@ -470,19 +472,17 @@ elif category == "CARDIOTHORACIC":
         **Key Radiologic Features:**
         - Mass shape, margins, calcification morphology, enhancement pattern
         """)
-        # For simplicity, let the user input a few features:
         shape = st.selectbox("Mass shape", ["Oval", "Round", "Irregular"])
         margin = st.selectbox("Mass margin", ["Circumscribed", "Not-circumscribed"])
-        calcifications = st.radio("Calcifications present?", ["No", "Yes"])
-        # Simplified automatic assignment:
-        if shape in ["Oval", "Round"] and margin == "Circumscribed" and calcifications == "No":
+        calc = st.radio("Calcifications present?", ["No", "Yes"])
+        if shape in ["Oval", "Round"] and margin == "Circumscribed" and calc == "No":
             birads = 2
         elif shape == "Irregular" or margin == "Not-circumscribed":
             birads = 4
         else:
             birads = 3
         st.write(f"**Calculated BI-RADS Category:** {birads}")
-        st.markdown("**Next Steps:** For BI-RADS 4, consider biopsy; for BI-RADS 3, short-term follow-up is recommended.")
+        st.markdown("**Next Steps:** For BI-RADS 4 lesions, consider biopsy; for BI-RADS 3, recommend short-term follow-up.")
 
 # =============================================================================
 # 4. ABDOMINOPELVIC
@@ -522,7 +522,6 @@ elif category == "ABDOMINOPELVIC":
             septa_thickness = "N/A"
         calcifications = st.radio("Calcifications", ["None", "Thin", "Thick/Nodular"])
         enhancement = st.radio("Is there enhancement of walls/septa?", ["No", "Yes"])
-        # Simplified scoring logic:
         if septa == "No" and calcifications == "None" and enhancement == "No":
             bosniak = "I"
         elif septa == "Yes" and septa_thickness == "Thin" and enhancement == "No":
@@ -543,14 +542,13 @@ elif category == "ABDOMINOPELVIC":
         st.subheader("AAST Organ Injury Scale (Example: Splenic Injury)")
         st.markdown("""
         **Key Radiologic Features for Splenic Injury on CT:**
-        - Subcapsular hematoma (<10% vs. 10–50% vs. >50% surface area)
-        - Laceration depth (<1 cm, 1–3 cm, >3 cm)
-        - Presence of vascular injury (yes/no)
+        - Subcapsular hematoma (extent as % of surface)  
+        - Laceration depth (cm)  
+        - Vascular injury (Yes/No)
         """)
         area = st.selectbox("Estimated surface area involvement", ["<10%", "10–50%", ">50%"])
         depth = st.selectbox("Laceration depth", ["<1 cm", "1–3 cm", ">3 cm"])
         vascular = st.radio("Vascular injury present?", ["No", "Yes"])
-        # Simplified assignment:
         if area == "<10%" and depth == "<1 cm" and vascular == "No":
             grade = "I"
         elif area == "10–50%" and depth == "1–3 cm" and vascular == "No":
@@ -563,19 +561,18 @@ elif category == "ABDOMINOPELVIC":
         st.markdown("**Next Steps:** High-grade injuries may require surgical or interventional radiology management.")
     
     # -----------------------------------------------------------
-    # 4.3 Balthazar Grade & CT Severity Index (Pancreatitis)
+    # 4.3 Balthazar & CTSI (Pancreatitis)
     # -----------------------------------------------------------
     elif abdo_option == "4.3 Balthazar/CT Severity Index (Pancreatitis)":
         st.subheader("Pancreatitis: Balthazar Grade & CT Severity Index (CTSI)")
         st.markdown("""
         **Key Features on Contrast CT:**
-        - Pancreatic inflammation (graded A–E)
-        - Presence and number of peripancreatic fluid collections
+        - Pancreatic inflammation (graded A–E)  
+        - Peripancreatic fluid collections  
         - Percentage of pancreatic necrosis (%)
         """)
         balthazar = st.selectbox("Select Balthazar Grade", ["A (Normal)", "B (Enlarged)", "C (Mild Inflammation)", "D (Single Fluid Collection)", "E (Multiple Fluid Collections)"])
         necrosis = st.slider("Estimate percentage of pancreatic necrosis (%)", 0, 100, 10, step=5)
-        # Simplified CTSI: assign points from Balthazar grade (e.g., A=0, B=1, C=2, D=3, E=4) plus necrosis points:
         balthazar_points = {"A (Normal)": 0, "B (Enlarged)": 1, "C (Mild Inflammation)": 2, "D (Single Fluid Collection)": 3, "E (Multiple Fluid Collections)": 4}
         if necrosis < 33:
             necrosis_points = 0
@@ -585,14 +582,14 @@ elif category == "ABDOMINOPELVIC":
             necrosis_points = 4
         ctsi = balthazar_points[balthazar] + necrosis_points
         st.write(f"**CT Severity Index (CTSI):** {ctsi} / 10")
-        st.markdown("**Next Steps:** Higher CTSI scores suggest a worse prognosis; manage pancreatitis accordingly with supportive care and consider ICU admission for severe cases.")
+        st.markdown("**Next Steps:** Higher CTSI scores indicate more severe pancreatitis; manage accordingly with supportive care and ICU monitoring for severe cases.")
     
     # -----------------------------------------------------------
     # 4.4 LI-RADS, 4.5 PI-RADS, 4.6 O-RADS, 4.7 TI-RADS, 4.8 FIGO
-    # (For brevity, these are similar to the '-RADS' systems below and can be integrated.)
+    # -----------------------------------------------------------
     elif abdo_option in ["4.4 LI-RADS (Liver)", "4.5 PI-RADS (Prostate)", "4.6 O-RADS (Ovarian-Adnexal)", "4.7 TI-RADS (Thyroid)", "4.8 FIGO Staging (Gynecologic Cancers)"]:
         st.subheader(f"{abdo_option}")
-        st.markdown("For these systems, please refer to the “-RADS SYSTEMS” section below for input of key imaging features and automatic classification.")
+        st.markdown("For these systems, please refer to the “-RADS SYSTEMS” section below for key imaging feature input and automatic classification.")
         st.info("This demo integrates LI-RADS, PI-RADS, O-RADS, TI-RADS, and FIGO staging in the -RADS SYSTEMS section.")
     
 # =============================================================================
@@ -618,25 +615,24 @@ elif category == "MUSCULOSKELETAL (MSK)":
         st.subheader("AO/OTA Fracture Classification (Long Bones)")
         st.markdown("""
         **Key Features:**
-        - Location: Proximal, Diaphyseal, or Distal
-        - Fracture pattern: Simple, Wedge, or Complex
+        - Location: Proximal, Diaphyseal, or Distal  
+        - Fracture pattern: Simple, Wedge, or Complex  
         - Articular involvement: Yes/No
         """)
         location = st.selectbox("Fracture location", ["Proximal", "Diaphyseal", "Distal"])
         pattern = st.selectbox("Fracture pattern", ["Simple", "Wedge", "Complex"])
         articular = st.radio("Articular involvement", ["No", "Yes"])
-        # (For demonstration, we output a simplified descriptor.)
         st.write(f"**AO/OTA Example:** {location} - {pattern} fracture{' with articular involvement' if articular=='Yes' else ''}.")
-        st.markdown("**Next Steps:** Determine treatment (conservative vs. surgical fixation) based on fracture stability and patient factors.")
+        st.markdown("**Next Steps:** Evaluate stability and consult orthopedics for treatment planning.")
     
     # -----------------------------------------------------------
-    # 5.2 Gustilo–Anderson Classification (Open Fractures)
+    # 5.2 Gustilo–Anderson Classification
     # -----------------------------------------------------------
     elif msk_option == "5.2 Gustilo–Anderson (Open Fractures)":
         st.subheader("Gustilo–Anderson Classification for Open Fractures")
         st.markdown("""
         **Key Features:**
-        - Wound size (in cm)
+        - Wound size (cm)  
         - Degree of soft tissue injury (minimal, moderate, extensive)
         """)
         wound_size = st.number_input("Wound size (cm)", min_value=0.0, value=1.0, step=0.1)
@@ -648,7 +644,7 @@ elif category == "MUSCULOSKELETAL (MSK)":
         else:
             gustilo = "Type III"
         st.write(f"**Gustilo–Anderson Type:** {gustilo}")
-        st.markdown("**Next Steps:** High-grade open fractures (Type III) require urgent debridement, stabilization, and possible vascular repair.")
+        st.markdown("**Next Steps:** High-grade open fractures (Type III) require urgent debridement and stabilization.")
     
     # -----------------------------------------------------------
     # 5.3 Tscherne Classification (Soft-Tissue Injuries)
@@ -657,11 +653,11 @@ elif category == "MUSCULOSKELETAL (MSK)":
         st.subheader("Tscherne Classification for Soft-Tissue Injuries")
         st.markdown("""
         **Key Features:**
-        - Degree of soft-tissue damage (for closed injuries: C0–C3)
+        - Degree of soft tissue damage in closed injuries (C0–C3)
         """)
-        tscherne_grade = st.selectbox("Select Tscherne Grade (Closed Injuries)", ["C0", "C1", "C2", "C3"])
+        tscherne_grade = st.selectbox("Select Tscherne Grade (Closed)", ["C0", "C1", "C2", "C3"])
         st.write(f"**Tscherne Grade:** {tscherne_grade}")
-        st.markdown("**Next Steps:** Higher Tscherne grades may require surgical debridement and specialized soft-tissue management.")
+        st.markdown("**Next Steps:** Higher grades may require surgical debridement and specialized soft-tissue management.")
     
     # -----------------------------------------------------------
     # 5.4 Salter-Harris Classification (Physeal Fractures)
@@ -670,11 +666,11 @@ elif category == "MUSCULOSKELETAL (MSK)":
         st.subheader("Salter-Harris Classification for Pediatric Fractures")
         st.markdown("""
         **Key Features:**
-        - Involvement of the physis, metaphysis, and/or epiphysis.
+        - Involvement of physis, metaphysis, and/or epiphysis.
         """)
         sh_type = st.selectbox("Select Salter-Harris Type", ["I", "II", "III", "IV", "V"])
         st.write(f"**Salter-Harris Type:** {sh_type}")
-        st.markdown("**Next Steps:** Higher types (III–V) are associated with growth disturbances; consult pediatric orthopedics.")
+        st.markdown("**Next Steps:** Higher types (III–V) warrant pediatric orthopedic consultation due to potential growth disturbances.")
     
     # -----------------------------------------------------------
     # 5.5 Other Fracture Classifications
@@ -724,7 +720,7 @@ elif category == "MUSCULOSKELETAL (MSK)":
             """)
             segments = st.selectbox("Select Neer Classification", ["One-Part", "Two-Part", "Three-Part", "Four-Part"])
             st.write(f"**Neer Classification:** {segments}")
-            st.markdown("**Next Steps:** Complex multi-part fractures generally require surgical intervention.")
+            st.markdown("**Next Steps:** Multi-part fractures generally require surgical intervention.")
         elif other_option == "Weber (Ankle)":
             st.markdown("""
             **Key Feature:**  
@@ -732,7 +728,7 @@ elif category == "MUSCULOSKELETAL (MSK)":
             """)
             weber = st.selectbox("Select Weber Type", ["A (Below Syndesmosis)", "B (At Syndesmosis)", "C (Above Syndesmosis)"])
             st.write(f"**Weber Type:** {weber}")
-            st.markdown("**Next Steps:** Evaluate for syndesmotic disruption; higher types may require surgical stabilization.")
+            st.markdown("**Next Steps:** Evaluate for syndesmotic injury; Type C fractures often require surgical stabilization.")
         elif other_option == "Lauge-Hansen (Ankle)":
             st.markdown("""
             **Key Feature:**  
@@ -740,7 +736,7 @@ elif category == "MUSCULOSKELETAL (MSK)":
             """)
             mechanism = st.selectbox("Select Mechanism", ["Supination–External Rotation", "Pronation–External Rotation", "Supination–Adduction", "Pronation–Abduction"])
             st.write(f"**Lauge-Hansen Mechanism:** {mechanism}")
-            st.markdown("**Next Steps:** Use the mechanism to predict associated ligamentous injuries and guide management.")
+            st.markdown("**Next Steps:** Use mechanism to guide management and assess for associated ligamentous injury.")
         elif other_option == "Frykman (Distal Radius)":
             st.markdown("""
             **Key Feature:**  
@@ -748,7 +744,7 @@ elif category == "MUSCULOSKELETAL (MSK)":
             """)
             frykman = st.selectbox("Select Frykman Type", ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"])
             st.write(f"**Frykman Type:** {frykman}")
-            st.markdown("**Next Steps:** Higher Frykman types with joint involvement may require surgical fixation.")
+            st.markdown("**Next Steps:** Higher Frykman types may require surgical intervention due to joint involvement.")
         elif other_option == "Sanders (Calcaneal)":
             st.markdown("""
             **Key Feature:**  
@@ -756,16 +752,16 @@ elif category == "MUSCULOSKELETAL (MSK)":
             """)
             sanders = st.selectbox("Select Sanders Type", ["I (<2 fragments)", "II (2 fragments)", "III (3 fragments)", "IV (≥4 fragments)"])
             st.write(f"**Sanders Type:** {sanders}")
-            st.markdown("**Next Steps:** High Sanders types suggest complex fracture patterns; surgical reconstruction is often indicated.")
+            st.markdown("**Next Steps:** Complex fractures (Sanders III and IV) often require surgical reconstruction.")
         elif other_option == "Mayo (Olecranon)":
             st.markdown("""
             **Key Feature:**  
-            Displacement and stability of the olecranon fracture.
+            Displacement and stability.
             """)
             mayo = st.selectbox("Select Mayo Type", ["Stable", "Unstable"])
             st.write(f"**Mayo Classification:** {mayo}")
-            st.markdown("**Next Steps:** Unstable fractures require surgical fixation.")
-
+            st.markdown("**Next Steps:** Unstable fractures typically require surgical fixation.")
+    
 # =============================================================================
 # 6. INTERVENTIONAL RADIOLOGY/VASCULAR
 # =============================================================================
@@ -781,17 +777,17 @@ elif category == "INTERVENTIONAL RADIOLOGY/VASCULAR":
     )
     
     # -----------------------------------------------------------
-    # 6.1 TICI Score (Thrombolysis in Cerebral Infarction)
+    # 6.1 TICI Score (Stroke)
     # -----------------------------------------------------------
     if vascular_option == "6.1 TICI Score (Stroke)":
         st.subheader("TICI Score for Reperfusion in Stroke")
         st.markdown("""
         **Key Angiographic Findings (DSA):**
-        - Degree of reperfusion distal to the occlusion.
+        - Degree of perfusion beyond the occlusion.
         """)
         tici = st.selectbox("Select TICI Grade", ["0", "1", "2a", "2b", "2c", "3"])
         st.write(f"**TICI Grade:** {tici}")
-        st.markdown("**Next Steps:** Suboptimal reperfusion (grades 0–2) may warrant further thrombectomy or adjunctive therapy.")
+        st.markdown("**Next Steps:** Suboptimal reperfusion (grades 0–2) may require further thrombectomy or adjunctive therapy.")
     
     # -----------------------------------------------------------
     # 6.2 Hamburg Classification (Vascular Malformations)
@@ -801,36 +797,34 @@ elif category == "INTERVENTIONAL RADIOLOGY/VASCULAR":
         st.markdown("""
         **Key Features:**
         - Flow dynamics: Fast-flow vs. slow-flow  
-        - Predominant tissue type: Capillary, venous, lymphatic, arterial, or mixed.
+        - Predominant tissue type: Capillary, venous, lymphatic, arterial, or combined.
         """)
         flow = st.selectbox("Flow type", ["Fast-flow", "Slow-flow"])
         tissue = st.selectbox("Dominant tissue component", ["Capillary", "Venous", "Lymphatic", "Arterial", "Combined"])
-        # (For demonstration, we simply output a summary.)
         st.write(f"**Classification:** {flow} {tissue} malformation")
         st.markdown("**Next Steps:** Treatment options include sclerotherapy, embolization, or surgical resection, depending on type.")
     
     # -----------------------------------------------------------
-    # 6.3 VARC Criteria (TAVR Outcomes)
+    # 6.3 VARC Criteria (TAVR)
     # -----------------------------------------------------------
     elif vascular_option == "6.3 VARC Criteria (TAVR)":
         st.subheader("VARC Criteria for TAVR Outcomes")
         st.markdown("""
         **Key Points:**
-        - Valve positioning (fluoroscopy/CT)
-        - Paravalvular leak (echocardiography)
-        - Vascular access complications (CT angiography)
+        - Valve positioning on fluoroscopy/CT  
+        - Paravalvular leak on echocardiography  
+        - Vascular access complications on CT angiography
         """)
         positioning = st.radio("Is valve positioning optimal?", ["Yes", "No"])
         leak = st.radio("Is there a significant paravalvular leak?", ["No", "Yes"])
         access = st.radio("Any vascular access complications?", ["No", "Yes"])
-        # Simplified assessment:
         if positioning == "Yes" and leak == "No" and access == "No":
             varc_outcome = "Favorable"
         else:
             varc_outcome = "Complicated"
         st.write(f"**VARC Outcome Assessment:** {varc_outcome}")
-        st.markdown("**Next Steps:** For complicated outcomes, multidisciplinary review is required to manage complications and optimize patient care.")
-
+        st.markdown("**Next Steps:** For complicated outcomes, arrange a multidisciplinary review to manage complications and optimize patient care.")
+    
 # =============================================================================
 # 7. “-RADS” SYSTEMS OVERVIEW
 # =============================================================================
@@ -849,19 +843,20 @@ elif category == "-RADS SYSTEMS":
         ]
     )
     
-    # For each, we ask for key imaging features and automatically assign a category.
+    # -----------------------------------------------------------
+    # BI-RADS
+    # -----------------------------------------------------------
     if rads_option == "BI-RADS (Breast)":
         st.subheader("ACR BI-RADS for Breast Imaging")
         st.markdown("""
         **Key Imaging Features:**
-        - Mass shape (Oval, Round, Irregular)
-        - Mass margin (Circumscribed, Not-circumscribed)
-        - Calcification morphology (Absent, Benign, Suspicious)
+        - Mass shape: Oval, Round, Irregular  
+        - Mass margin: Circumscribed, Not-circumscribed  
+        - Calcification morphology: Absent, Benign, Suspicious
         """)
         shape = st.selectbox("Mass shape", ["Oval", "Round", "Irregular"])
         margin = st.selectbox("Mass margin", ["Circumscribed", "Not-circumscribed"])
         calc = st.radio("Calcifications", ["No", "Yes"])
-        # Simplified scoring:
         if shape in ["Oval", "Round"] and margin == "Circumscribed" and calc == "No":
             birads = 2
         elif shape == "Irregular" or margin == "Not-circumscribed":
@@ -869,18 +864,20 @@ elif category == "-RADS SYSTEMS":
         else:
             birads = 3
         st.write(f"**BI-RADS Category:** {birads}")
-        st.markdown("**Next Steps:** For BI-RADS 4 lesions, consider biopsy. BI-RADS 3 lesions warrant short-term follow-up.")
+        st.markdown("**Next Steps:** For BI-RADS 4 lesions, consider biopsy; for BI-RADS 3, recommend short-term follow-up.")
     
+    # -----------------------------------------------------------
+    # Lung-RADS
+    # -----------------------------------------------------------
     elif rads_option == "Lung-RADS (Lung CT Screening)":
         st.subheader("Lung-RADS for CT Screening")
         st.markdown("""
         **Key Imaging Features:**
-        - Nodule size (mm)
-        - Nodule type (Solid, Part-solid, Ground-glass)
+        - Nodule size (mm)  
+        - Nodule type: Solid, Part-solid, Ground-glass
         """)
         nodule_size = st.number_input("Nodule size (mm)", min_value=0, value=5)
         nodule_type = st.radio("Nodule type", ["Solid", "Part-solid", "Ground-glass"])
-        # Simplified decision:
         if nodule_size < 6:
             lung_rads = "Category 2"
         elif 6 <= nodule_size < 8:
@@ -890,6 +887,9 @@ elif category == "-RADS SYSTEMS":
         st.write(f"**Lung-RADS Category:** {lung_rads}")
         st.markdown("**Next Steps:** Recommend appropriate follow-up CT; suspicious nodules (Category 4) may need further diagnostic evaluation.")
     
+    # -----------------------------------------------------------
+    # LI-RADS
+    # -----------------------------------------------------------
     elif rads_option == "LI-RADS (Liver)":
         st.subheader("LI-RADS for Liver Lesions")
         st.markdown("""
@@ -903,7 +903,6 @@ elif category == "-RADS SYSTEMS":
         washout = st.radio("Is washout observed in later phases?", ["No", "Yes"])
         capsule = st.radio("Is capsule appearance present?", ["No", "Yes"])
         size = st.number_input("Lesion size (mm)", min_value=0, value=8)
-        # Simplified: if both APHE and washout are present, assign higher LI-RADS
         if aphe == "Yes" and washout == "Yes":
             li_category = "LR-4"
         elif any([aphe=="Yes", washout=="Yes", capsule=="Yes"]) or size >= 10:
@@ -913,18 +912,20 @@ elif category == "-RADS SYSTEMS":
         st.write(f"**LI-RADS Category:** {li_category}")
         st.markdown("**Next Steps:** For LI-RADS 4 lesions, further evaluation with biopsy or surgical consultation is advised.")
     
+    # -----------------------------------------------------------
+    # PI-RADS
+    # -----------------------------------------------------------
     elif rads_option == "PI-RADS (Prostate)":
         st.subheader("PI-RADS for Prostate MRI")
         st.markdown("""
         **Key Imaging Features:**
         - T2 signal: Look for hypointense lesions in the peripheral zone  
         - Diffusion: Restricted diffusion on DWI/ADC  
-        - DCE: Early enhancement
+        - Dynamic contrast enhancement (DCE)
         """)
         t2 = st.radio("Is there a hypointense lesion on T2?", ["No", "Yes"])
         dwi = st.radio("Is there restricted diffusion?", ["No", "Yes"])
         dce = st.radio("Is there early focal enhancement?", ["No", "Yes"])
-        # Simplified logic:
         if dwi == "Yes":
             pi_score = 4
         else:
@@ -932,28 +933,30 @@ elif category == "-RADS SYSTEMS":
         st.write(f"**PI-RADS Score:** {pi_score}")
         st.markdown("**Next Steps:** Lesions with PI-RADS ≥4 should be considered for biopsy and further urologic evaluation.")
     
+    # -----------------------------------------------------------
+    # TI-RADS
+    # -----------------------------------------------------------
     elif rads_option == "TI-RADS (Thyroid)":
         st.subheader("TI-RADS for Thyroid Ultrasound")
         st.markdown("""
         **Key Imaging Features:**
-        - Nodule composition (Cystic, Mixed, Solid)  
-        - Echogenicity (Anechoic, Hypoechoic, Isoechoic)  
-        - Shape (Taller-than-wide or not)  
-        - Margins (Smooth or Irregular)  
-        - Echogenic foci (Microcalcifications)
+        - Nodule composition: Cystic, Mixed, Solid  
+        - Echogenicity: Anechoic, Isoechoic, Hypoechoic  
+        - Shape: Taller-than-wide?  
+        - Margins: Smooth or Irregular  
+        - Presence of microcalcifications
         """)
         composition = st.selectbox("Nodule composition", ["Cystic", "Mixed", "Solid"])
         echogenicity = st.selectbox("Echogenicity", ["Anechoic", "Isoechoic", "Hypoechoic"])
         shape = st.radio("Nodule shape", ["Not taller-than-wide", "Taller-than-wide"])
         margins = st.radio("Margins", ["Smooth", "Irregular"])
-        microcalcifications = st.radio("Microcalcifications present?", ["No", "Yes"])
-        # Simplified scoring:
+        microcalc = st.radio("Microcalcifications present?", ["No", "Yes"])
         score = 0
         if composition == "Solid": score += 1
         if echogenicity == "Hypoechoic": score += 1
         if shape == "Taller-than-wide": score += 1
         if margins == "Irregular": score += 1
-        if microcalcifications == "Yes": score += 1
+        if microcalc == "Yes": score += 1
         if score <= 1:
             ti_category = "TR1"
         elif score == 2:
@@ -967,12 +970,15 @@ elif category == "-RADS SYSTEMS":
         st.write(f"**TI-RADS Category:** {ti_category}")
         st.markdown("**Next Steps:** Nodules in TR4 or TR5 should be considered for fine-needle aspiration biopsy.")
     
+    # -----------------------------------------------------------
+    # O-RADS
+    # -----------------------------------------------------------
     elif rads_option == "O-RADS (Ovarian-Adnexal)":
         st.subheader("O-RADS for Ovarian/Adnexal Masses")
         st.markdown("""
         **Key Imaging Features (US/MRI):**
-        - Morphology: Cystic, solid, or complex  
-        - Presence of septations, papillary projections  
+        - Mass morphology: Simple cyst, Multilocular cyst, Complex mass  
+        - Presence of septations and papillary projections  
         - Vascular flow on Doppler
         """)
         morphology = st.selectbox("Mass morphology", ["Simple cyst", "Multilocular cyst", "Complex mass"])
@@ -987,15 +993,18 @@ elif category == "-RADS SYSTEMS":
         st.write(f"**O-RADS Category:** {orads}")
         st.markdown("**Next Steps:** Higher O-RADS categories (4 or above) warrant surgical evaluation and possible biopsy.")
     
+    # -----------------------------------------------------------
+    # NI-RADS
+    # -----------------------------------------------------------
     elif rads_option == "NI-RADS (Neck)":
         st.subheader("NI-RADS for Neck Imaging")
         st.markdown("""
         **Key Imaging Features:**
-        - Evaluation of primary site and nodal regions post-treatment for head & neck cancers.
+        - Evaluation of the primary site and nodal regions post-treatment for head & neck cancers.
         """)
         ni_rads = st.selectbox("Select NI-RADS Category", ["1", "2", "3", "4"])
         st.write(f"**NI-RADS Category:** {ni_rads}")
-        st.markdown("**Next Steps:** Higher NI-RADS categories may require closer surveillance and additional diagnostic procedures.")
+        st.markdown("**Next Steps:** Higher NI-RADS categories require closer surveillance and possible further diagnostic workup.")
 
 st.markdown("---")
 st.markdown("**Disclaimer:** This application is for educational and demonstration purposes only and should not be used as a substitute for professional clinical judgment.")
